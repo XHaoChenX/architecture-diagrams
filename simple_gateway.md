@@ -14,10 +14,10 @@ flowchart TD
     end
 
     subgraph gateway["gateway（Agent）"]
-        Agent[Gateway Agent<br>编排与决策]
-        SysPrompt[系统提示词<br>大白助手]
-        ToolCall{工具调用?}
-        LLM[LLM 调用<br>Kimi API Provider]
+        Agent[Gateway Agent<br>消息接入与分发]
+        Dabai[Dabai Agent 引擎<br>编排与决策]
+        ToolCall{是否触发工具?}
+        LLM[模型调用<br>Kimi API Provider]
     end
 
     subgraph tools["tools/"]
@@ -36,10 +36,10 @@ flowchart TD
     Receive --> Parse
     Parse --> Dedup
     Dedup -->|"text"| Agent
-    Agent --> SysPrompt
-    SysPrompt --> LLM
-    LLM --> Agent
-    Agent --> ToolCall
+    Agent --> Dabai
+    Dabai --> LLM
+    LLM --> Dabai
+    Dabai --> ToolCall
 
     ToolCall -->|"无工具调用"| SendText
     ToolCall -->|"captureScreen"| Capture
@@ -56,14 +56,14 @@ flowchart TD
 
     class WS,LarkIM external
     class Receive,Parse,Dedup,Capture,SaveImage,UploadImg,SendText,SendImg process
-    class Agent,SysPrompt,ToolCall,LLM,ScreenshotExe ai
+    class Agent,Dabai,ToolCall,LLM,ScreenshotExe ai
 ```
 
 ## 消息流程
 
 1. **接收**: 飞书 WebSocket 接收用户消息
 2. **解析**: bot.ts 解析 JSON content 提取 text
-3. **Agent 处理**: gateway 作为 Agent 负责上下文、提示词、决策
-4. **LLM 调用**: Agent 调用 Kimi 等 AI API 模型提供商获取回复
-5. **判断**: Agent 判断是否需要工具，无工具→文本回复，有 captureScreen→截图
+3. **引擎调用**: gateway 将请求交给 `Dabai Agent` 引擎处理
+4. **模型交互**: `Dabai Agent` 负责与 Kimi 等模型提供商交互并完成推理
+5. **工具判断**: 由 `Dabai Agent` 判断是否需要工具，无工具则返回文本，有 `captureScreen` 则进入截图流程
 6. **响应**: 通过飞书 IM API 发送文本或图片
