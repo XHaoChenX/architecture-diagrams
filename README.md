@@ -6,3 +6,4 @@
 - dabai_agent.md: 纯 C++ 实现的通用 AI Agent 引擎架构说明，涵盖模型调用、工具执行、流程编排与 Skills 懒加载
 - ios_ai_notes.md: 个人ios AI 笔记
 - simple_gateway.md: 参考openclaw写的简gateway
+- agents.png: 通过我写的代码仓库分析工具生成的这个工具的架构图(它自己描述它自己==, 我创造了它, 它分析自己并画出了它自己的架构图..真的不可思议)
